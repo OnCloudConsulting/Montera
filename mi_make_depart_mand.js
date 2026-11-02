@@ -2,7 +2,8 @@
  * @NApiVersion 2.x
  * @NScriptType ClientScript
  * Class and Building must be available on the header and editable line sublists.
- * Department is validated on all transactions except journal entries.
+ * Department is required on the header for all transactions except journal entries,
+ * and on qualifying lines for all transactions (including journals).
  */
 define(['N/search', 'N/log'], function (search, log) {
     var sublists = ['line', 'expense', 'item'];
@@ -97,8 +98,9 @@ define(['N/search', 'N/log'], function (search, log) {
         var rec = context.currentRecord;
         var accounts = {}, items = {}, warnings = [];
         var isJournal = journalTypes.indexOf(rec.type) !== -1;
-        var fields = isJournal ? ['class', 'cseg_building'] : ['department', 'class', 'cseg_building'];
-        var labels = isJournal ? ['Campus (Class)', 'Building'] : ['Department', 'Campus (Class)', 'Building'];
+        // Line-level validation always includes Department, including on journals.
+        var fields = ['department', 'class', 'cseg_building'];
+        var labels = ['Department', 'Campus (Class)', 'Building'];
         try {
             updating = true;
             subsidiaryCache = {}; // Refresh defaults when saving.
